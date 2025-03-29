@@ -1,0 +1,193 @@
+<mvc:View
+    controllerName="com.bootcamp.sapui5.finalproject.controller.Detail"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    xmlns:ui="sap.ui.table"
+    displayBlock="true"
+>
+    <Page
+        id="detailPage"
+        title="{i18n>detailPageTitle}"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+    >
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <f:SimpleForm
+                    editable="false"
+                    layout="ResponsiveGridLayout"
+                    title="{i18n>supplierDetailsTitle}"
+                    labelSpanXL="4"
+                    labelSpanL="4"
+                    labelSpanM="4"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="0"
+                    emptySpanL="0"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="2"
+                    columnsL="2"
+                    columnsM="2"
+                    singleContainerFullSize="false"
+                >
+                    <f:content>
+                        <core:Title text="{i18n>supplierBasicInfo}" />
+                        <Label text="{i18n>supplierIdLabel}" />
+                        <Text text="{SupplierID}" />
+                        <Label text="{i18n>companyNameLabel}" />
+                        <Text text="{CompanyName}" />
+                        <Label text="{i18n>contactNameLabel}" />
+                        <Text text="{ContactName}" />
+                        <Label text="{i18n>contactTitleLabel}" />
+                        <Text text="{ContactTitle}" />
+
+                        <core:Title text="{i18n>supplierContactInfo}" />
+                        <Label text="{i18n>addressLabel}" />
+                        <Text text="{Address}" />
+                        <Label text="{i18n>cityLabel}" />
+                        <Text text="{City}" />
+                        <Label text="{i18n>regionLabel}" />
+                        <Text text="{Region}" />
+                        <Label text="{i18n>postalCodeLabel}" />
+                        <Text text="{PostalCode}" />
+                        <Label text="{i18n>countryLabel}" />
+                        <Text text="{Country}" />
+                        <Label text="{i18n>phoneLabel}" />
+                        <Text text="{Phone}" />
+                        <Label text="{i18n>faxLabel}" />
+                        <Text text="{Fax}" />
+                        <Label text="{i18n>homepageLabel}" />
+                        <Link
+                            text="{HomePage}"
+                            target="_blank"
+                            visible="{= ${HomePage} ? true : false}"
+                        />
+                    </f:content>
+                </f:SimpleForm>
+
+                <Panel
+                    expandable="true"
+                    expanded="true"
+                    headerText="{i18n>supplierProductsTitle}"
+                    class="sapUiResponsiveMargin"
+                >
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title
+                                text="{i18n>supplierProductsTitle}"
+                                level="H2"
+                            />
+                            <ToolbarSpacer />
+                            <Button
+                                text="{i18n>createProductButtonText}"
+                                icon="sap-icon://add"
+                                press=".onCreateProduct"
+                                type="Emphasized"
+                            />
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    <content>
+                        <ui:Table
+                            id="productsTable"
+                            rows="{products>/}"
+                            selectionMode="Single"
+                            selectionBehavior="RowSelector"
+                            visibleRowCount="5"
+                            rowSelectionChange=".onProductRowSelectionChange"
+                            alternateRowColors="true"
+                        >
+                            <ui:columns>
+                                <ui:Column
+                                    id="productIdColumn"
+                                    width="100px"
+                                    sortProperty="ProductID"
+                                >
+                                    <Label text="{i18n>productIdColumn}" />
+                                    <ui:template>
+                                        <Text text="{products>ProductID}" />
+                                    </ui:template>
+                                </ui:Column>
+                                <ui:Column
+                                    id="productNameColumn"
+                                    width="200px"
+                                    sortProperty="ProductName"
+                                >
+                                    <Label text="{i18n>productNameColumn}" />
+                                    <ui:template>
+                                        <Text text="{products>ProductName}" />
+                                    </ui:template>
+                                </ui:Column>
+                                <ui:Column
+                                    id="quantityPerUnitColumn"
+                                    width="150px"
+                                    sortProperty="QuantityPerUnit"
+                                >
+                                    <Label
+                                        text="{i18n>quantityPerUnitColumn}"
+                                    />
+                                    <ui:template>
+                                        <Text
+                                            text="{products>QuantityPerUnit}"
+                                        />
+                                    </ui:template>
+                                </ui:Column>
+                                <ui:Column
+                                    id="unitPriceColumn"
+                                    width="100px"
+                                    sortProperty="UnitPrice"
+                                >
+                                    <Label text="{i18n>unitPriceColumn}" />
+                                    <ui:template>
+                                        <Text
+                                            text="{
+                                            path: 'products>UnitPrice',
+                                            formatter: '.formatter.formatCurrency'
+                                        }"
+                                        />
+                                    </ui:template>
+                                </ui:Column>
+                                <ui:Column
+                                    id="unitsInStockColumn"
+                                    width="100px"
+                                    sortProperty="UnitsInStock"
+                                >
+                                    <Label text="{i18n>unitsInStockColumn}" />
+                                    <ui:template>
+                                        <Text text="{products>UnitsInStock}" />
+                                    </ui:template>
+                                </ui:Column>
+                                <ui:Column
+                                    id="discontinuedColumn"
+                                    width="100px"
+                                    sortProperty="Discontinued"
+                                >
+                                    <Label text="{i18n>discontinuedColumn}" />
+                                    <ui:template>
+                                        <ObjectStatus
+                                            text="{= ${products>Discontinued} ? '${i18n>yes}' : '${i18n>no}' }"
+                                            state="{= ${products>Discontinued} ? 'Error' : 'Success' }"
+                                        />
+                                    </ui:template>
+                                </ui:Column>
+                                <ui:Column width="80px">
+                                    <Label text="{i18n>actionsColumn}" />
+                                    <ui:template>
+                                        <Button
+                                            icon="sap-icon://display"
+                                            press=".onShowProductDetails"
+                                            tooltip="{i18n>showProductDetailsTooltip}"
+                                        />
+                                    </ui:template>
+                                </ui:Column>
+                            </ui:columns>
+                        </ui:Table>
+                    </content>
+                </Panel>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
