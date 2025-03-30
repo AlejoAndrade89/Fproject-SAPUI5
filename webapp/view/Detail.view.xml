@@ -6,6 +6,8 @@
     xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core"
     xmlns:ui="sap.ui.table"
+    xmlns:rowmodes="sap.ui.table.rowmodes"
+    xmlns:smartTable="sap.ui.comp.smarttable"
     displayBlock="true"
 >
     <Page
@@ -91,15 +93,41 @@
                         </OverflowToolbar>
                     </headerToolbar>
                     <content>
+                        <smartTable:SmartTable
+                            id="productsSmartTable"
+                            entitySet="Products"
+                            tableType="Table"
+                            enableExport="false"
+                            beforeRebindTable=".onBeforeRebindTable"
+                            initiallyVisibleFields="ProductID,ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,Discontinued"
+                            enableAutoBinding="false"
+                            class="sapUiResponsiveMargin"
+                        >
+                            <smartTable:customToolbar>
+                                <OverflowToolbar design="Transparent">
+                                    <ToolbarSpacer />
+                                    <Button
+                                        icon="sap-icon://refresh"
+                                        tooltip="{i18n>refreshButtonTooltip}"
+                                        press=".onRefreshProducts"
+                                    />
+                                </OverflowToolbar>
+                            </smartTable:customToolbar>
+                        </smartTable:SmartTable>
+
                         <ui:Table
                             id="productsTable"
                             rows="{products>/}"
                             selectionMode="Single"
-                            selectionBehavior="RowSelector"
-                            visibleRowCount="5"
+                            selectionBehavior="Row"
                             rowSelectionChange=".onProductRowSelectionChange"
                             alternateRowColors="true"
+                            visible="true"
                         >
+                            <ui:rowMode>
+                                <rowmodes:Fixed rowCount="5" />
+                            </ui:rowMode>
+
                             <ui:columns>
                                 <ui:Column
                                     id="productIdColumn"
@@ -143,10 +171,7 @@
                                     <Label text="{i18n>unitPriceColumn}" />
                                     <ui:template>
                                         <Text
-                                            text="{
-                                            path: 'products>UnitPrice',
-                                            formatter: '.formatter.formatCurrency'
-                                        }"
+                                            text="{path: 'products>UnitPrice', formatter: '.formatter.formatCurrency'}"
                                         />
                                     </ui:template>
                                 </ui:Column>
@@ -173,17 +198,29 @@
                                         />
                                     </ui:template>
                                 </ui:Column>
-                                <ui:Column width="80px">
+                                <ui:Column width="120px">
                                     <Label text="{i18n>actionsColumn}" />
                                     <ui:template>
-                                        <Button
-                                            icon="sap-icon://display"
-                                            press=".onShowProductDetails"
-                                            tooltip="{i18n>showProductDetailsTooltip}"
-                                        />
+                                        <HBox>
+                                            <Button
+                                                icon="sap-icon://display"
+                                                press=".onShowProductDetails"
+                                                tooltip="{i18n>showProductDetailsTooltip}"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <Button
+                                                icon="sap-icon://delete"
+                                                press=".onDeleteProduct"
+                                                tooltip="{i18n>deleteProductTooltip}"
+                                                type="Reject"
+                                            />
+                                        </HBox>
                                     </ui:template>
                                 </ui:Column>
                             </ui:columns>
+                            <ui:noData>
+                                <Text text="No data available" />
+                            </ui:noData>
                         </ui:Table>
                     </content>
                 </Panel>

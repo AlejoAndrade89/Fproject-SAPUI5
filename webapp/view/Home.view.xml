@@ -5,6 +5,7 @@
     xmlns:f="sap.f"
     xmlns:core="sap.ui.core"
     xmlns:ui="sap.ui.table"
+    xmlns:rowmodes="sap.ui.table.rowmodes"
     displayBlock="true">
     <Page id="supplierListPage" title="{i18n>homePageTitle}">
         <content>
@@ -70,12 +71,16 @@
                         id="suppliersTable"
                         rows="{/Suppliers}"
                         selectionMode="Single"
-                        selectionBehavior="RowSelector"
-                        visibleRowCount="20"
+                        selectionBehavior="Row"
                         rowSelectionChange=".onRowSelectionChange"
+                        cellClick=".onCellClick"
                         enableBusyIndicator="true"
                         alternateRowColors="true"
                         ariaLabelledBy="title">
+                        <ui:rowMode>
+                            <rowmodes:Fixed rowCount="20" />
+                        </ui:rowMode>
+
                         <ui:extension>
                             <OverflowToolbar>
                                 <Title id="title" text="{i18n>suppliersTableTitle}"/>
@@ -87,64 +92,43 @@
                             </OverflowToolbar>
                         </ui:extension>
                         <ui:columns>
-                            <ui:Column 
-                                id="supplierIdColumn" 
-                                width="100px" 
-                                sortProperty="SupplierID">
+                            <ui:Column id="supplierIdColumn" width="100px" sortProperty="SupplierID">
                                 <Label text="{i18n>supplierIdColumn}"/>
                                 <ui:template>
                                     <Text text="{SupplierID}"/>
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="companyNameColumn" 
-                                width="200px" 
-                                sortProperty="CompanyName">
+                            <ui:Column id="companyNameColumn" width="200px" sortProperty="CompanyName">
                                 <Label text="{i18n>companyNameColumn}"/>
                                 <ui:template>
                                     <Text text="{CompanyName}"/>
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="contactNameColumn" 
-                                width="150px" 
-                                sortProperty="ContactName">
+                            <ui:Column id="contactNameColumn" width="150px" sortProperty="ContactName">
                                 <Label text="{i18n>contactNameColumn}"/>
                                 <ui:template>
                                     <Text text="{ContactName}"/>
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="contactTitleColumn" 
-                                width="150px" 
-                                sortProperty="ContactTitle">
+                            <ui:Column id="contactTitleColumn" width="150px" sortProperty="ContactTitle">
                                 <Label text="{i18n>contactTitleColumn}"/>
                                 <ui:template>
                                     <Text text="{ContactTitle}"/>
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="cityColumn" 
-                                width="120px" 
-                                sortProperty="City">
+                            <ui:Column id="cityColumn" width="120px" sortProperty="City">
                                 <Label text="{i18n>cityColumn}"/>
                                 <ui:template>
                                     <Text text="{City}"/>
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="countryColumn" 
-                                width="120px" 
-                                sortProperty="Country">
+                            <ui:Column id="countryColumn" width="120px" sortProperty="Country">
                                 <Label text="{i18n>countryColumn}"/>
                                 <ui:template>
                                     <Text text="{Country}"/>
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="phoneColumn" 
-                                width="120px" 
-                                sortProperty="Phone">
+                            <ui:Column id="phoneColumn" width="120px" sortProperty="Phone">
                                 <Label text="{i18n>phoneColumn}"/>
                                 <ui:template>
                                     <Text text="{Phone}"/>
@@ -155,17 +139,5 @@
                 </f:content>
             </f:DynamicPage>
         </content>
-        <footer>
-            <OverflowToolbar>
-                <ToolbarSpacer/>
-                <Button
-                    id="navigateButton"
-                    text="{i18n>detailViewButtonText}"
-                    type="Emphasized"
-                    press=".onNavigateToDetail"
-                    enabled="false"
-                    icon="sap-icon://display"/>
-            </OverflowToolbar>
-        </footer>
     </Page>
 </mvc:View>
