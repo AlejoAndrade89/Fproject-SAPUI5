@@ -49,7 +49,9 @@
       "minUI5Version": "1.134.1",
       "libs": {
         "sap.m": {},
-        "sap.ui.core": {}
+        "sap.ui.core": {},
+        "sap.f": {},
+        "sap.ui.layout": {}
       }
     },
     "contentDensities": {
@@ -67,6 +69,10 @@
         "dataSource": "mainService",
         "preload": true,
         "settings": {}
+      },
+      "productModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {}
       }
     },
     "resources": {
@@ -79,28 +85,42 @@
     "routing": {
       "config": {
         "routerClass": "sap.m.routing.Router",
-        "controlAggregation": "pages",
-        "controlId": "app",
-        "transition": "slide",
-        "type": "View",
         "viewType": "XML",
-        "path": "com.bootcamp.sapui5.finalproject.view",
         "async": true,
-        "viewPath": "com.bootcamp.sapui5.finalproject.view"
+        "viewPath": "com.bootcamp.sapui5.finalproject.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "transition": "slide",
+        "bypassed": {
+          "target": "notFound"
+        }
       },
       "routes": [
         {
-          "name": "RouteHome",
-          "pattern": ":?query:",
-          "target": [
-            "TargetHome"
-          ]
+          "name": "home",
+          "pattern": "",
+          "target": ["home"]
+        },
+        {
+          "name": "detail",
+          "pattern": "supplier/{supplierId}",
+          "target": ["detail"]
         }
       ],
       "targets": {
-        "TargetHome": {
-          "id": "Home",
-          "name": "Home"
+        "home": {
+          "viewName": "Home",
+          "viewLevel": 1,
+          "viewId": "home"
+        },
+        "detail": {
+          "viewName": "Detail",
+          "viewLevel": 2,
+          "viewId": "detail"
+        },
+        "notFound": {
+          "viewName": "NotFound",
+          "viewId": "notFound"
         }
       }
     },
