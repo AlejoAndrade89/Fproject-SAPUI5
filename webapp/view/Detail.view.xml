@@ -86,15 +86,16 @@
                             initiallyVisibleFields="ProductID,ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,Discontinued"
                         >
                             <Table
+                                id="innerProductsTable"
                                 fixedLayout="false"
                                 alternateRowColors="true"
                                 growing="true"
                                 growingThreshold="15"
                                 growingScrollToLoad="true"
                                 sticky="ColumnHeaders,HeaderToolbar"
+                                mode="SingleSelectMaster"
                             >
-                                <!-- No definimos las columnas explícitamente porque 
-                                     SmartTable las maneja basándose en los metadatos -->
+                                <!-- Columns are automatically managed by SmartTable based on metadata -->
                             </Table>
 
                             <smartTable:customToolbar>
@@ -110,6 +111,7 @@
                                         press=".onCreateProduct"
                                         type="Emphasized"
                                         class="sapUiSmallMarginEnd"
+                                        tooltip="Create new product"
                                     />
                                     <Button
                                         icon="sap-icon://delete"
@@ -117,6 +119,7 @@
                                         press=".onDeleteProduct"
                                         enabled="{= ${productsModel>/selectedItem} !== null}"
                                         type="Transparent"
+                                        tooltip="Delete selected product"
                                     />
                                 </OverflowToolbar>
                             </smartTable:customToolbar>
@@ -125,5 +128,16 @@
                 </Panel>
             </VBox>
         </content>
+
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button
+                    type="Back"
+                    text="Back to Suppliers"
+                    press=".onNavBack"
+                />
+            </Toolbar>
+        </footer>
     </Page>
 </mvc:View>

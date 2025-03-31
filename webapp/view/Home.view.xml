@@ -111,7 +111,7 @@
                         alternateRowColors="true"
                         ariaLabelledBy="title"
                     >
-                    <ui:rowMode>
+                        <ui:rowMode>
                             <rowmodes:Fixed rowCount="20" />
                         </ui:rowMode>
 
