@@ -5,8 +5,6 @@
     xmlns:f="sap.ui.layout.form"
     xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core"
-    xmlns:ui="sap.ui.table"
-    xmlns:rowmodes="sap.ui.table.rowmodes"
     xmlns:smartTable="sap.ui.comp.smarttable"
     displayBlock="true"
 >
@@ -100,128 +98,24 @@
                             enableExport="false"
                             beforeRebindTable=".onBeforeRebindTable"
                             initiallyVisibleFields="ProductID,ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,Discontinued"
-                            enableAutoBinding="false"
+                            enableAutoBinding="true"
                             class="sapUiResponsiveMargin"
+                            showRowCount="true"
+                            header="{i18n>productsTableTitle}"
+                            showFullScreenButton="false"
                         >
                             <smartTable:customToolbar>
                                 <OverflowToolbar design="Transparent">
                                     <ToolbarSpacer />
-                                    <Button
-                                        icon="sap-icon://refresh"
-                                        tooltip="{i18n>refreshButtonTooltip}"
-                                        press=".onRefreshProducts"
-                                    />
+                                    <Button 
+                                        icon="sap-icon://delete" 
+                                        text="{i18n>deleteProductButton}" 
+                                        press=".onDeleteProduct"
+                                        enabled="{= ${productsModel>/selectedItem} !== null}" 
+                                        type="Transparent" />
                                 </OverflowToolbar>
                             </smartTable:customToolbar>
                         </smartTable:SmartTable>
-
-                        <ui:Table
-                            id="productsTable"
-                            rows="{products>/}"
-                            selectionMode="Single"
-                            selectionBehavior="Row"
-                            rowSelectionChange=".onProductRowSelectionChange"
-                            alternateRowColors="true"
-                            visible="true"
-                        >
-                            <ui:rowMode>
-                                <rowmodes:Fixed rowCount="5" />
-                            </ui:rowMode>
-
-                            <ui:columns>
-                                <ui:Column
-                                    id="productIdColumn"
-                                    width="100px"
-                                    sortProperty="ProductID"
-                                >
-                                    <Label text="{i18n>productIdColumn}" />
-                                    <ui:template>
-                                        <Text text="{products>ProductID}" />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="productNameColumn"
-                                    width="200px"
-                                    sortProperty="ProductName"
-                                >
-                                    <Label text="{i18n>productNameColumn}" />
-                                    <ui:template>
-                                        <Text text="{products>ProductName}" />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="quantityPerUnitColumn"
-                                    width="150px"
-                                    sortProperty="QuantityPerUnit"
-                                >
-                                    <Label
-                                        text="{i18n>quantityPerUnitColumn}"
-                                    />
-                                    <ui:template>
-                                        <Text
-                                            text="{products>QuantityPerUnit}"
-                                        />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="unitPriceColumn"
-                                    width="100px"
-                                    sortProperty="UnitPrice"
-                                >
-                                    <Label text="{i18n>unitPriceColumn}" />
-                                    <ui:template>
-                                        <Text
-                                            text="{path: 'products>UnitPrice', formatter: '.formatter.formatCurrency'}"
-                                        />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="unitsInStockColumn"
-                                    width="100px"
-                                    sortProperty="UnitsInStock"
-                                >
-                                    <Label text="{i18n>unitsInStockColumn}" />
-                                    <ui:template>
-                                        <Text text="{products>UnitsInStock}" />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="discontinuedColumn"
-                                    width="100px"
-                                    sortProperty="Discontinued"
-                                >
-                                    <Label text="{i18n>discontinuedColumn}" />
-                                    <ui:template>
-                                        <ObjectStatus
-                                            text="{= ${products>Discontinued} ? '${i18n>yes}' : '${i18n>no}' }"
-                                            state="{= ${products>Discontinued} ? 'Error' : 'Success' }"
-                                        />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column width="120px">
-                                    <Label text="{i18n>actionsColumn}" />
-                                    <ui:template>
-                                        <HBox>
-                                            <Button
-                                                icon="sap-icon://display"
-                                                press=".onShowProductDetails"
-                                                tooltip="{i18n>showProductDetailsTooltip}"
-                                                class="sapUiTinyMarginEnd"
-                                            />
-                                            <Button
-                                                icon="sap-icon://delete"
-                                                press=".onDeleteProduct"
-                                                tooltip="{i18n>deleteProductTooltip}"
-                                                type="Reject"
-                                            />
-                                        </HBox>
-                                    </ui:template>
-                                </ui:Column>
-                            </ui:columns>
-                            <ui:noData>
-                                <Text text="No data available" />
-                            </ui:noData>
-                        </ui:Table>
                     </content>
                 </Panel>
             </VBox>
