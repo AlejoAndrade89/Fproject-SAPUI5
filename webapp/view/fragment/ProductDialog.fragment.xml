@@ -29,49 +29,68 @@
                 singleContainerFullSize="false"
             >
                 <f:content>
-                    <Label text="{i18n>productIdLabel}" visible="{= ${productDialog>/dialogMode} !== 'create'}" />
-                    <Text text="{productDialog>/formData/ProductID}" visible="{= ${productDialog>/dialogMode} !== 'create'}" />
-                    
-                    <Label text="{i18n>productNameLabel}" required="true" />
-                    <Input 
+                    <Label
+                        text="{i18n>productIdLabel}"
+                        visible="{= ${productDialog>/dialogMode} !== 'create'}"
+                    />
+                    <Text
+                        text="{productDialog>/formData/ProductID}"
+                        visible="{= ${productDialog>/dialogMode} !== 'create'}"
+                    />
+
+                    <Label
+                        text="{i18n>productNameLabel}"
+                        required="true"
+                    />
+                    <Input
                         value="{productDialog>/formData/ProductName}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
-                        required="true" />
-                    
-                    <Label text="{i18n>quantityPerUnitLabel}" required="true" />
-                    <Input 
+                        required="true"
+                    />
+
+                    <Label
+                        text="{i18n>quantityPerUnitLabel}"
+                        required="true"
+                    />
+                    <Input
                         value="{productDialog>/formData/QuantityPerUnit}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
-                        required="true" />
-                    
+                        required="true"
+                    />
+
                     <Label text="{i18n>unitPriceLabel}" />
-                    <Input 
+                    <Input
                         value="{productDialog>/formData/UnitPrice}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
-                        type="Number" />
-                    
+                        type="Number"
+                    />
+
                     <Label text="{i18n>unitsInStockLabel}" />
-                    <Input 
+                    <Input
                         value="{productDialog>/formData/UnitsInStock}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
-                        type="Number" />
-                    
+                        type="Number"
+                    />
+
                     <Label text="{i18n>discontinuedColumn}" />
-                    <CheckBox 
+                    <CheckBox
                         selected="{productDialog>/formData/Discontinued}"
-                        editable="{= ${productDialog>/dialogMode} === 'create'}" />
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                    />
                 </f:content>
             </f:SimpleForm>
         </content>
         <buttons>
-            <Button 
-                text="{i18n>saveButton}" 
-                type="Emphasized" 
+            <Button
+                text="{i18n>saveButton}"
+                type="Emphasized"
                 press=".onSaveProduct"
-                visible="{= ${productDialog>/dialogMode} === 'create'}" />
-            <Button 
-                text="{= ${productDialog>/dialogMode} === 'create' ? ${i18n>cancelButton} : ${i18n>closeButton}}" 
-                press=".onCloseProductDialog" />
+                visible="{= ${productDialog>/dialogMode} === 'create'}"
+            />
+            <Button
+                text="{= ${productDialog>/dialogMode} === 'create' ? ${i18n>cancelButton} : ${i18n>closeButton}}"
+                press=".onCloseProductDialog"
+            />
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

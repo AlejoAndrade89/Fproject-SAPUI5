@@ -5,61 +5,96 @@
     xmlns:f="sap.f"
     xmlns:core="sap.ui.core"
     xmlns:ui="sap.ui.table"
-    displayBlock="true">
-    <Page id="supplierListPage" title="{i18n>homePageTitle}">
+    xmlns:rowmodes="sap.ui.table.rowmodes"
+    displayBlock="true"
+>
+    <Page
+        id="supplierListPage"
+        title="{i18n>homePageTitle}"
+    >
         <content>
-            <f:DynamicPage id="dynamicPageId" headerExpanded="{/headerExpanded}" toggleHeaderOnTitleClick="true">
+            <f:DynamicPage
+                id="dynamicPageId"
+                headerExpanded="{/headerExpanded}"
+                toggleHeaderOnTitleClick="true"
+            >
                 <f:title>
                     <f:DynamicPageTitle>
                         <f:heading>
-                            <Title text="{i18n>supplierListTitle}"/>
+                            <Title text="{i18n>supplierListTitle}" />
                         </f:heading>
                     </f:DynamicPageTitle>
                 </f:title>
                 <f:header>
                     <f:DynamicPageHeader pinnable="true">
-                        <FlexBox alignItems="Start" justifyContent="SpaceBetween">
+                        <FlexBox
+                            alignItems="Start"
+                            justifyContent="SpaceBetween"
+                        >
                             <items>
                                 <VBox>
-                                    <FlexBox wrap="Wrap" alignItems="Start">
+                                    <FlexBox
+                                        wrap="Wrap"
+                                        alignItems="Start"
+                                    >
                                         <items>
-                                            <VBox class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
-                                                <Label text="{i18n>supplierIdLabel}" labelFor="supplierId"/>
+                                            <VBox
+                                                class="sapUiSmallMarginEnd sapUiSmallMarginBottom"
+                                            >
+                                                <Label
+                                                    text="{i18n>supplierIdLabel}"
+                                                    labelFor="supplierId"
+                                                />
                                                 <Input
                                                     id="supplierId"
                                                     placeholder="{i18n>supplierIdPlaceholder}"
                                                     width="200px"
-                                                    value="{viewModel>/filter/supplierID}"/>
+                                                    value="{viewModel>/filter/supplierID}"
+                                                />
                                             </VBox>
-                                            <VBox class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
-                                                <Label text="{i18n>supplierNameLabel}" labelFor="supplierName"/>
+                                            <VBox
+                                                class="sapUiSmallMarginEnd sapUiSmallMarginBottom"
+                                            >
+                                                <Label
+                                                    text="{i18n>supplierNameLabel}"
+                                                    labelFor="supplierName"
+                                                />
                                                 <Input
                                                     id="supplierName"
                                                     placeholder="{i18n>supplierNamePlaceholder}"
                                                     width="200px"
-                                                    value="{viewModel>/filter/companyName}"/>
+                                                    value="{viewModel>/filter/companyName}"
+                                                />
                                             </VBox>
-                                            <VBox class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
-                                                <Label text="{i18n>supplierCityLabel}" labelFor="supplierCity"/>
+                                            <VBox
+                                                class="sapUiSmallMarginEnd sapUiSmallMarginBottom"
+                                            >
+                                                <Label
+                                                    text="{i18n>supplierCityLabel}"
+                                                    labelFor="supplierCity"
+                                                />
                                                 <Input
                                                     id="supplierCity"
                                                     placeholder="{i18n>supplierCityPlaceholder}"
                                                     width="200px"
-                                                    value="{viewModel>/filter/city}"/>
+                                                    value="{viewModel>/filter/city}"
+                                                />
                                             </VBox>
                                         </items>
                                     </FlexBox>
                                 </VBox>
                                 <VBox alignItems="End">
-                                    <Button 
-                                        text="{i18n>applyFilterButton}" 
-                                        type="Emphasized" 
+                                    <Button
+                                        text="{i18n>applyFilterButton}"
+                                        type="Emphasized"
                                         press=".onApplyFilter"
-                                        class="sapUiSmallMarginEnd"/>
-                                    <Button 
-                                        text="{i18n>resetFilterButton}" 
+                                        class="sapUiSmallMarginEnd"
+                                    />
+                                    <Button
+                                        text="{i18n>resetFilterButton}"
                                         press=".onResetFilter"
-                                        class="sapUiSmallMarginEnd"/>
+                                        class="sapUiSmallMarginEnd"
+                                    />
                                 </VBox>
                             </items>
                         </FlexBox>
@@ -71,83 +106,98 @@
                         rows="{/Suppliers}"
                         selectionMode="Single"
                         selectionBehavior="Row"
-                        visibleRowCount="20"
                         cellClick=".onCellClick"
                         enableBusyIndicator="true"
                         alternateRowColors="true"
-                        ariaLabelledBy="title">
+                        ariaLabelledBy="title"
+                    >
+                    <ui:rowMode>
+                            <rowmodes:Fixed rowCount="20" />
+                        </ui:rowMode>
+
                         <ui:extension>
                             <OverflowToolbar>
-                                <Title id="title" text="{i18n>suppliersTableTitle}"/>
-                                <ToolbarSpacer/>
+                                <Title
+                                    id="title"
+                                    text="{i18n>suppliersTableTitle}"
+                                />
+                                <ToolbarSpacer />
                                 <Button
                                     icon="sap-icon://refresh"
                                     tooltip="{i18n>refreshButtonTooltip}"
-                                    press=".onRefresh"/>
+                                    press=".onRefresh"
+                                />
                             </OverflowToolbar>
                         </ui:extension>
                         <ui:columns>
-                            <ui:Column 
-                                id="supplierIdColumn" 
-                                width="100px" 
-                                sortProperty="SupplierID">
-                                <Label text="{i18n>supplierIdColumn}"/>
+                            <ui:Column
+                                id="supplierIdColumn"
+                                width="100px"
+                                sortProperty="SupplierID"
+                            >
+                                <Label text="{i18n>supplierIdColumn}" />
                                 <ui:template>
-                                    <Text text="{SupplierID}"/>
+                                    <Text text="{SupplierID}" />
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="companyNameColumn" 
-                                width="200px" 
-                                sortProperty="CompanyName">
-                                <Label text="{i18n>companyNameColumn}"/>
+                            <ui:Column
+                                id="companyNameColumn"
+                                width="200px"
+                                sortProperty="CompanyName"
+                            >
+                                <Label text="{i18n>companyNameColumn}" />
                                 <ui:template>
-                                    <Text text="{CompanyName}"/>
+                                    <Text text="{CompanyName}" />
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="contactNameColumn" 
-                                width="150px" 
-                                sortProperty="ContactName">
-                                <Label text="{i18n>contactNameColumn}"/>
+                            <ui:Column
+                                id="contactNameColumn"
+                                width="150px"
+                                sortProperty="ContactName"
+                            >
+                                <Label text="{i18n>contactNameColumn}" />
                                 <ui:template>
-                                    <Text text="{ContactName}"/>
+                                    <Text text="{ContactName}" />
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="contactTitleColumn" 
-                                width="150px" 
-                                sortProperty="ContactTitle">
-                                <Label text="{i18n>contactTitleColumn}"/>
+                            <ui:Column
+                                id="contactTitleColumn"
+                                width="150px"
+                                sortProperty="ContactTitle"
+                            >
+                                <Label text="{i18n>contactTitleColumn}" />
                                 <ui:template>
-                                    <Text text="{ContactTitle}"/>
+                                    <Text text="{ContactTitle}" />
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="cityColumn" 
-                                width="120px" 
-                                sortProperty="City">
-                                <Label text="{i18n>cityColumn}"/>
+                            <ui:Column
+                                id="cityColumn"
+                                width="120px"
+                                sortProperty="City"
+                            >
+                                <Label text="{i18n>cityColumn}" />
                                 <ui:template>
-                                    <Text text="{City}"/>
+                                    <Text text="{City}" />
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="countryColumn" 
-                                width="120px" 
-                                sortProperty="Country">
-                                <Label text="{i18n>countryColumn}"/>
+                            <ui:Column
+                                id="countryColumn"
+                                width="120px"
+                                sortProperty="Country"
+                            >
+                                <Label text="{i18n>countryColumn}" />
                                 <ui:template>
-                                    <Text text="{Country}"/>
+                                    <Text text="{Country}" />
                                 </ui:template>
                             </ui:Column>
-                            <ui:Column 
-                                id="phoneColumn" 
-                                width="120px" 
-                                sortProperty="Phone">
-                                <Label text="{i18n>phoneColumn}"/>
+                            <ui:Column
+                                id="phoneColumn"
+                                width="120px"
+                                sortProperty="Phone"
+                            >
+                                <Label text="{i18n>phoneColumn}" />
                                 <ui:template>
-                                    <Text text="{Phone}"/>
+                                    <Text text="{Phone}" />
                                 </ui:template>
                             </ui:Column>
                         </ui:columns>

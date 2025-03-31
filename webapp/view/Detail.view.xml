@@ -96,10 +96,13 @@
                                 <!-- No definimos las columnas explícitamente porque 
                                      SmartTable las maneja basándose en los metadatos -->
                             </Table>
-                            
+
                             <smartTable:customToolbar>
                                 <OverflowToolbar design="Transparent">
-                                    <Title id="productsTitle" text="Products ({productsModel>/count})" />
+                                    <Title
+                                        id="productsTitle"
+                                        text="Products ({productsModel>/count})"
+                                    />
                                     <ToolbarSpacer />
                                     <Button
                                         text="{i18n>createProductButtonText}"

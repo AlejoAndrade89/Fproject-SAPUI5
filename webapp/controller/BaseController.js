@@ -3,7 +3,7 @@ sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/core/routing/History",
     "sap/ui/model/json/JSONModel"
-], function(Controller, UIComponent, History, JSONModel) {
+], function (Controller, UIComponent, History, JSONModel) {
     "use strict";
 
     return Controller.extend("com.bootcamp.sapui5.finalproject.controller.BaseController", {
@@ -57,29 +57,29 @@ sap.ui.define([
                 this.getRouter().navTo("home", {}, true);
             }
         },
-        
+
         /**
          * Show a message toast with the given text
          */
         showMessage(sMessage) {
             sap.m.MessageToast.show(sMessage);
         },
-        
+
         /**
          * Create and set a JSON model to the view or component
          */
         createAndSetJSONModel(oData, sName, bGlobal) {
             const oModel = new JSONModel(oData);
-            
+
             if (bGlobal) {
                 this.getOwnerComponent().setModel(oModel, sName);
             } else {
                 this.setModel(oModel, sName);
             }
-            
+
             return oModel;
         },
-        
+
         /**
          * Handle service errors
          */
