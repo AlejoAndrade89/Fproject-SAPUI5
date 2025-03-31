@@ -3,9 +3,10 @@
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:f="sap.ui.layout.form"
-    xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core"
     xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:smartField="sap.ui.comp.smartfield"
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     displayBlock="true"
 >
     <Page
@@ -25,10 +26,6 @@
                     labelSpanM="4"
                     labelSpanS="12"
                     adjustLabelSpan="false"
-                    emptySpanXL="0"
-                    emptySpanL="0"
-                    emptySpanM="0"
-                    emptySpanS="0"
                     columnsXL="2"
                     columnsL="2"
                     columnsM="2"
@@ -70,49 +67,54 @@
                 </f:SimpleForm>
 
                 <Panel
-                    expandable="true"
-                    expanded="true"
                     headerText="{i18n>supplierProductsTitle}"
                     class="sapUiResponsiveMargin"
+                    expandable="true"
+                    expanded="true"
                 >
-                    <headerToolbar>
-                        <OverflowToolbar>
-                            <Title
-                                text="{i18n>supplierProductsTitle}"
-                                level="H2"
-                            />
-                            <ToolbarSpacer />
-                            <Button
-                                text="{i18n>createProductButtonText}"
-                                icon="sap-icon://add"
-                                press=".onCreateProduct"
-                                type="Emphasized"
-                            />
-                        </OverflowToolbar>
-                    </headerToolbar>
                     <content>
                         <smartTable:SmartTable
                             id="productsSmartTable"
                             entitySet="Products"
-                            tableType="Table"
-                            enableExport="false"
-                            beforeRebindTable=".onBeforeRebindTable"
-                            initiallyVisibleFields="ProductID,ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,Discontinued"
+                            tableType="ResponsiveTable"
+                            enableExport="true"
                             enableAutoBinding="true"
+                            beforeRebindTable=".onBeforeRebindTable"
+                            showRowCount="false"
+                            showFullScreenButton="true"
                             class="sapUiResponsiveMargin"
-                            showRowCount="true"
-                            header="{i18n>productsTableTitle}"
-                            showFullScreenButton="false"
+                            initiallyVisibleFields="ProductID,ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,Discontinued"
                         >
+                            <Table
+                                fixedLayout="false"
+                                alternateRowColors="true"
+                                growing="true"
+                                growingThreshold="15"
+                                growingScrollToLoad="true"
+                                sticky="ColumnHeaders,HeaderToolbar"
+                            >
+                                <!-- No definimos las columnas explícitamente porque 
+                                     SmartTable las maneja basándose en los metadatos -->
+                            </Table>
+                            
                             <smartTable:customToolbar>
                                 <OverflowToolbar design="Transparent">
+                                    <Title id="productsTitle" text="Products ({productsModel>/count})" />
                                     <ToolbarSpacer />
-                                    <Button 
-                                        icon="sap-icon://delete" 
-                                        text="{i18n>deleteProductButton}" 
+                                    <Button
+                                        text="{i18n>createProductButtonText}"
+                                        icon="sap-icon://add"
+                                        press=".onCreateProduct"
+                                        type="Emphasized"
+                                        class="sapUiSmallMarginEnd"
+                                    />
+                                    <Button
+                                        icon="sap-icon://delete"
+                                        text="{i18n>deleteProductButton}"
                                         press=".onDeleteProduct"
-                                        enabled="{= ${productsModel>/selectedItem} !== null}" 
-                                        type="Transparent" />
+                                        enabled="{= ${productsModel>/selectedItem} !== null}"
+                                        type="Transparent"
+                                    />
                                 </OverflowToolbar>
                             </smartTable:customToolbar>
                         </smartTable:SmartTable>
