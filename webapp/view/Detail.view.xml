@@ -80,10 +80,11 @@
                             enableExport="true"
                             enableAutoBinding="true"
                             beforeRebindTable=".onBeforeRebindTable"
-                            showRowCount="false"
+                            showRowCount="true"
                             showFullScreenButton="true"
                             class="sapUiResponsiveMargin"
                             initiallyVisibleFields="ProductID,ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,Discontinued"
+                            persistencyKey="supplierProductsTable"
                         >
                             <Table
                                 id="innerProductsTable"

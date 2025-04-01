@@ -36,19 +36,17 @@ sap.ui.define([
             // Register route pattern matched handler
             this.getRouter().getRoute("detail").attachPatternMatched(this._onRouteMatched, this);
 
-            // Attach to smartTable's 'initialise' event
-            this.byId("productsSmartTable").attachInitialise(this._onSmartTableInitialised, this);
-        },
-
-        _onSmartTableInitialised(oEvent) {
-            const oTable = this.byId("productsSmartTable").getTable();
-            
-            // Set up table events
-            oTable.attachSelectionChange(this.onRowSelectionChange, this);
-            oTable.setSelectionMode("Single");
-            
-            // Add double-click or item press event to show product details
-            oTable.attachItemPress(this.onProductRowDoubleClick, this);
+            // Safely attach to smartTable's 'initialise' event
+            const oSmartTable = this.byId("productsSmartTable");
+            if (oSmartTable) {
+                // Use promise-based initialization
+                this._smartTableInitialized = false;
+                
+                oSmartTable.attachEventOnce("initialise", () => {
+                    this._smartTableInitialized = true;
+                    console.log("SmartTable initialized");
+                });
+            }
         },
 
         _onRouteMatched(oEvent) {
@@ -64,10 +62,27 @@ sap.ui.define([
                 }
             });
 
-            // Reset selection and refresh table
-            this.getModel("productsModel").setProperty("/selectedItem", null);
-            if (this.byId("productsSmartTable")) {
-                this.byId("productsSmartTable").rebindTable();
+            // Use a promise-based approach to ensure table is ready
+            const oSmartTable = this.byId("productsSmartTable");
+            if (oSmartTable) {
+                // Create a promise that resolves when table is initialized
+                const tableInitPromise = new Promise((resolve) => {
+                    const checkInitialization = () => {
+                        if (this._smartTableInitialized) {
+                            resolve();
+                        } else {
+                            setTimeout(checkInitialization, 100);
+                        }
+                    };
+                    checkInitialization();
+                });
+
+                // Rebind table after initialization
+                tableInitPromise.then(() => {
+                    oSmartTable.rebindTable();
+                }).catch((error) => {
+                    console.error("Error rebinding table:", error);
+                });
             }
         },
 
@@ -79,13 +94,18 @@ sap.ui.define([
         },
 
         onBeforeRebindTable(oEvent) {
+            // Check if supplier ID is available
+            if (!this._sCurrentSupplierId) {
+                console.warn("Supplier ID not available, skipping table rebind");
+                oEvent.preventDefault();
+                return;
+            }
+
             const oBindingParams = oEvent.getParameter("bindingParams");
 
             // Add filter for current supplier
-            if (this._sCurrentSupplierId) {
-                const oFilter = new Filter("SupplierID", FilterOperator.EQ, this._sCurrentSupplierId);
-                oBindingParams.filters.push(oFilter);
-            }
+            const oFilter = new Filter("SupplierID", FilterOperator.EQ, this._sCurrentSupplierId);
+            oBindingParams.filters.push(oFilter);
 
             // Setup product counting
             oBindingParams.parameters = oBindingParams.parameters || {};
@@ -120,7 +140,6 @@ sap.ui.define([
             }
         },
         
-        // Method to open the dialog when a product is clicked
         onProductRowDoubleClick(oEvent) {
             // Get the data object of the selected product
             const oContext = oEvent.getParameter("listItem").getBindingContext();
