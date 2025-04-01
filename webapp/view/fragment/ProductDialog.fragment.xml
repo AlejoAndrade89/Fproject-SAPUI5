@@ -29,6 +29,7 @@
                 singleContainerFullSize="false"
             >
                 <f:content>
+                    <!-- Keep your existing content the same -->
                     <Label
                         text="{i18n>productIdLabel}"
                         visible="{= ${productDialog>/dialogMode} !== 'create'}"
@@ -37,7 +38,6 @@
                         text="{productDialog>/formData/ProductID}"
                         visible="{= ${productDialog>/dialogMode} !== 'create'}"
                     />
-
                     <Label
                         text="{i18n>productNameLabel}"
                         required="true"
@@ -47,7 +47,6 @@
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
                         required="true"
                     />
-
                     <Label
                         text="{i18n>quantityPerUnitLabel}"
                         required="true"
@@ -57,21 +56,18 @@
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
                         required="true"
                     />
-
                     <Label text="{i18n>unitPriceLabel}" />
                     <Input
                         value="{productDialog>/formData/UnitPrice}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
                         type="Number"
                     />
-
                     <Label text="{i18n>unitsInStockLabel}" />
                     <Input
                         value="{productDialog>/formData/UnitsInStock}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
                         type="Number"
                     />
-
                     <Label text="{i18n>discontinuedColumn}" />
                     <CheckBox
                         selected="{productDialog>/formData/Discontinued}"
@@ -80,17 +76,20 @@
                 </f:content>
             </f:SimpleForm>
         </content>
-        <buttons>
+        <!-- Change from 'buttons' to beginButton/endButton -->
+        <beginButton>
             <Button
                 text="{i18n>saveButton}"
                 type="Emphasized"
                 press=".onSaveProduct"
                 visible="{= ${productDialog>/dialogMode} === 'create'}"
             />
+        </beginButton>
+        <endButton>
             <Button
                 text="{= ${productDialog>/dialogMode} === 'create' ? ${i18n>cancelButton} : ${i18n>closeButton}}"
                 press=".onCloseProductDialog"
             />
-        </buttons>
+        </endButton>
     </Dialog>
 </core:FragmentDefinition>
