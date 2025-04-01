@@ -83,7 +83,7 @@
                             showRowCount="true"
                             showFullScreenButton="true"
                             class="sapUiResponsiveMargin"
-                            initiallyVisibleFields="ProductID,ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,Discontinued"
+                            initiallyVisibleFields="ProductID,ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,Discontinued,CategoryID,ReorderLevel,SupplierID,UnitsOnOrder"
                             persistencyKey="supplierProductsTable"
                         >
                             <Table

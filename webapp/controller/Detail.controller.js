@@ -15,10 +15,14 @@ sap.ui.define([
         formatter: formatter,
 
         onInit() {
+            // Initialize local products array for simulating product creation
+            this._localProducts = [];
+
             // Set up models
             this.createAndSetJSONModel({
                 selectedItem: null,
-                count: 0
+                count: 0,
+                products: []
             }, "productsModel");
 
             this.createAndSetJSONModel({
@@ -36,22 +40,39 @@ sap.ui.define([
             // Register route pattern matched handler
             this.getRouter().getRoute("detail").attachPatternMatched(this._onRouteMatched, this);
 
-            // Safely attach to smartTable's 'initialise' event
+            // Attach to smartTable's 'initialise' event
             const oSmartTable = this.byId("productsSmartTable");
             if (oSmartTable) {
-                // Use promise-based initialization
-                this._smartTableInitialized = false;
-                
-                oSmartTable.attachEventOnce("initialise", () => {
-                    this._smartTableInitialized = true;
-                    console.log("SmartTable initialized");
-                });
+                oSmartTable.attachEventOnce("initialise", this._onSmartTableInitialised, this);
             }
+        },
+
+        _onSmartTableInitialised(oEvent) {
+            const oTable = this.byId("productsSmartTable").getTable();
+
+            // Set up table events
+            oTable.attachSelectionChange(this.onRowSelectionChange, this);
+
+            // For responsive tables (sap.m.Table), use setMode instead of setSelectionMode
+            oTable.setMode("SingleSelectMaster");
+
+            // Add item press event to show product details
+            oTable.attachItemPress(this.onProductRowDoubleClick, this);
+
+            // Set alignment for all columns to left
+            oTable.getColumns().forEach(function (oColumn) {
+                oColumn.setHAlign("Begin");
+            });
+
+            this._smartTableInitialized = true;
         },
 
         _onRouteMatched(oEvent) {
             // Store the supplier ID for later use
             this._sCurrentSupplierId = oEvent.getParameter("arguments").supplierId;
+
+            // Reset local products when changing suppliers
+            this._localProducts = [];
 
             // Bind the view to the supplier details
             const sPath = `/Suppliers(${this._sCurrentSupplierId})`;
@@ -62,27 +83,12 @@ sap.ui.define([
                 }
             });
 
-            // Use a promise-based approach to ensure table is ready
-            const oSmartTable = this.byId("productsSmartTable");
-            if (oSmartTable) {
-                // Create a promise that resolves when table is initialized
-                const tableInitPromise = new Promise((resolve) => {
-                    const checkInitialization = () => {
-                        if (this._smartTableInitialized) {
-                            resolve();
-                        } else {
-                            setTimeout(checkInitialization, 100);
-                        }
-                    };
-                    checkInitialization();
-                });
+            // Reset selection and refresh table
+            this.getModel("productsModel").setProperty("/selectedItem", null);
 
-                // Rebind table after initialization
-                tableInitPromise.then(() => {
-                    oSmartTable.rebindTable();
-                }).catch((error) => {
-                    console.error("Error rebinding table:", error);
-                });
+            // Rebind table if initialized
+            if (this._smartTableInitialized) {
+                this.byId("productsSmartTable").rebindTable();
             }
         },
 
@@ -111,43 +117,91 @@ sap.ui.define([
             oBindingParams.parameters = oBindingParams.parameters || {};
             oBindingParams.parameters.$count = true;
             oBindingParams.events = oBindingParams.events || {};
-            
+
             const originalDataReceived = oBindingParams.events.dataReceived;
             oBindingParams.events.dataReceived = (oData) => {
                 if (originalDataReceived) {
                     originalDataReceived(oData);
                 }
-                
-                // Update product count
-                const oBinding = oEvent.getSource().getTable().getBinding("items");
+
+                // Get the table and binding
+                const oSmartTable = this.byId("productsSmartTable");
+                const oTable = oSmartTable.getTable();
+                const oBinding = oTable.getBinding("items");
+
+                // Update product count (backend + local products)
                 if (oBinding && oBinding.getLength) {
-                    this.getModel("productsModel").setProperty("/count", oBinding.getLength());
+                    const iODataCount = oBinding.getLength();
+                    const iTotalCount = iODataCount + this._localProducts.length;
+                    this.getModel("productsModel").setProperty("/count", iTotalCount);
+
+                    // Add our local products to the table for demo purposes
+                    setTimeout(() => {
+                        this._addLocalProductsToTable(oTable);
+                    }, 100);
                 }
             };
         },
 
-        onRowSelectionChange(oEvent) {
-            const oTable = oEvent.getSource();
-            const aSelectedItems = oTable.getSelectedItems();
-            
-            if (aSelectedItems && aSelectedItems.length > 0) {
-                const oContext = aSelectedItems[0].getBindingContext();
-                if (oContext) {
-                    this.getModel("productsModel").setProperty("/selectedItem", oContext.getObject());
-                }
-            } else {
-                this.getModel("productsModel").setProperty("/selectedItem", null);
+        // Method to add local products to the table after OData binding completes
+        _addLocalProductsToTable(oTable) {
+            if (!this._localProducts || this._localProducts.length === 0) {
+                return;
             }
+
+            // For each local product, add a new row to the table
+            this._localProducts.forEach(oProduct => {
+                // Create a new list item with the appropriate cells
+                const oCells = [];
+
+                // Create cells for ALL visible fields in the table
+                oCells.push(new sap.m.Text({ text: oProduct.ProductID.toString() }));
+                oCells.push(new sap.m.Text({ text: oProduct.ProductName }));
+                oCells.push(new sap.m.Text({ text: oProduct.QuantityPerUnit }));
+                oCells.push(new sap.m.Text({ text: oProduct.UnitPrice.toString() }));
+                oCells.push(new sap.m.Text({ text: oProduct.UnitsInStock.toString() }));
+                oCells.push(new sap.m.Text({ text: oProduct.Discontinued ? "Yes" : "No" }));
+                oCells.push(new sap.m.Text({ text: oProduct.CategoryID ? oProduct.CategoryID.toString() : "1" }));
+                oCells.push(new sap.m.Text({ text: oProduct.ReorderLevel ? oProduct.ReorderLevel.toString() : "10" }));
+                oCells.push(new sap.m.Text({ text: oProduct.SupplierID.toString() }));
+                oCells.push(new sap.m.Text({ text: oProduct.UnitsOnOrder ? oProduct.UnitsOnOrder.toString() : "0" }));
+
+                // Create and add the row
+                const oRow = new sap.m.ColumnListItem({
+                    cells: oCells,
+                    type: "Active",
+                    // Use the correct event handler
+                    press: () => {
+                        // Make a copy of the product to avoid reference issues
+                        const oProductCopy = JSON.parse(JSON.stringify(oProduct));
+
+                        // Set dialog mode to "display"
+                        this.getModel("productDialog").setProperty("/dialogMode", "display");
+
+                        // Update form data with the product
+                        this.getModel("productDialog").setProperty("/formData", {
+                            ProductID: oProductCopy.ProductID,
+                            ProductName: oProductCopy.ProductName,
+                            QuantityPerUnit: oProductCopy.QuantityPerUnit,
+                            UnitPrice: oProductCopy.UnitPrice,
+                            UnitsInStock: oProductCopy.UnitsInStock,
+                            Discontinued: oProductCopy.Discontinued
+                        });
+
+                        // Open the dialog directly
+                        this._openProductDialog();
+                    }
+                });
+
+                oTable.addItem(oRow);
+            });
         },
-        
-        onProductRowDoubleClick(oEvent) {
-            // Get the data object of the selected product
-            const oContext = oEvent.getParameter("listItem").getBindingContext();
-            const oProduct = oContext.getObject();
-            
+
+        // Method to show details for local products
+        _showLocalProductDetails(oProduct) {
             // Set dialog mode to "display"
             this.getModel("productDialog").setProperty("/dialogMode", "display");
-            
+
             // Update form information with product data
             this.getModel("productDialog").setProperty("/formData", {
                 ProductID: oProduct.ProductID,
@@ -157,7 +211,43 @@ sap.ui.define([
                 UnitsInStock: oProduct.UnitsInStock,
                 Discontinued: oProduct.Discontinued
             });
-            
+
+            // Open the product dialog
+            this._openProductDialog();
+        },
+
+        onRowSelectionChange(oEvent) {
+            const oTable = oEvent.getSource();
+            const aSelectedItems = oTable.getSelectedItems();
+
+            if (aSelectedItems && aSelectedItems.length > 0) {
+                const oContext = aSelectedItems[0].getBindingContext();
+                if (oContext) {
+                    this.getModel("productsModel").setProperty("/selectedItem", oContext.getObject());
+                }
+            } else {
+                this.getModel("productsModel").setProperty("/selectedItem", null);
+            }
+        },
+
+        onProductRowDoubleClick(oEvent) {
+            // Get the data object of the selected product
+            const oContext = oEvent.getParameter("listItem").getBindingContext();
+            const oProduct = oContext.getObject();
+
+            // Set dialog mode to "display"
+            this.getModel("productDialog").setProperty("/dialogMode", "display");
+
+            // Update form information with product data
+            this.getModel("productDialog").setProperty("/formData", {
+                ProductID: oProduct.ProductID,
+                ProductName: oProduct.ProductName,
+                QuantityPerUnit: oProduct.QuantityPerUnit,
+                UnitPrice: oProduct.UnitPrice,
+                UnitsInStock: oProduct.UnitsInStock,
+                Discontinued: oProduct.Discontinued
+            });
+
             // Open the product dialog
             this._openProductDialog();
         },
@@ -173,7 +263,7 @@ sap.ui.define([
                 UnitsInStock: 0,
                 Discontinued: false
             });
-            
+
             this._openProductDialog();
         },
 
@@ -191,7 +281,7 @@ sap.ui.define([
                     if (sAction === MessageBox.Action.OK) {
                         // Deletion simulation
                         MessageToast.show(this.getResourceBundle().getText("productDeletedSuccess"));
-                        
+
                         // Update table and clear selection
                         this.byId("productsSmartTable").rebindTable();
                         this.getModel("productsModel").setProperty("/selectedItem", null);
@@ -231,30 +321,52 @@ sap.ui.define([
         },
 
         onSaveProduct() {
+            // Get form data
             const oModel = this.getModel("productDialog");
             const oFormData = oModel.getProperty("/formData");
 
+            // Validate required fields
             if (!this._validateProductForm(oFormData)) {
                 MessageToast.show(this.getResourceBundle().getText("requiredFieldError"));
                 return;
             }
 
-            // Simulate product creation
-            oFormData.ProductID = Math.floor(Math.random() * 10000) + 1000;
-            oFormData.SupplierID = parseInt(this._sCurrentSupplierId);
+            // Generate a unique ID for the new product
+            const newProductId = Math.floor(Math.random() * 1000) + 1000;
 
+            // Create new product object with ALL fields needed for display
+            const oNewProduct = {
+                ProductID: newProductId,
+                ProductName: oFormData.ProductName,
+                QuantityPerUnit: oFormData.QuantityPerUnit,
+                UnitPrice: parseFloat(oFormData.UnitPrice) || 0,
+                UnitsInStock: parseInt(oFormData.UnitsInStock) || 0,
+                Discontinued: oFormData.Discontinued,
+                SupplierID: parseInt(this._sCurrentSupplierId),
+                // Add default values for missing fields that appear in the table
+                CategoryID: 1,
+                ReorderLevel: 10,
+                UnitsOnOrder: 0
+            };
+
+            // Store in local products array (for demo only)
+            this._localProducts.push(oNewProduct);
+
+            // Update product count
+            const iCurrentCount = this.getModel("productsModel").getProperty("/count") || 0;
+            this.getModel("productsModel").setProperty("/count", iCurrentCount + 1);
+
+            // Show success message and close dialog
             MessageToast.show(this.getResourceBundle().getText("productCreatedSuccess"));
             this.onCloseProductDialog();
-            
-            // Simulate table update
-            setTimeout(() => {
-                this.byId("productsSmartTable").rebindTable();
-            }, 500);
+
+            // Refresh table to include the new product
+            this.byId("productsSmartTable").rebindTable();
         },
 
         _validateProductForm(oFormData) {
             return oFormData.ProductName && oFormData.ProductName.trim() !== "" &&
-                   oFormData.QuantityPerUnit && oFormData.QuantityPerUnit.trim() !== "";
+                oFormData.QuantityPerUnit && oFormData.QuantityPerUnit.trim() !== "";
         }
     });
 });
