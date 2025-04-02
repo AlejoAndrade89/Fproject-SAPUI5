@@ -8,6 +8,7 @@
         id="productDialog"
         title="{= ${productDialog>/dialogMode} === 'create' ? ${i18n>productDialogCreateTitle} : ${i18n>productDialogTitle} }"
         class="sapUiSizeCompact"
+        busy="{productDialog>/busy}"
     >
         <content>
             <f:SimpleForm
@@ -19,17 +20,12 @@
                 labelSpanM="4"
                 labelSpanS="12"
                 adjustLabelSpan="false"
-                emptySpanXL="0"
-                emptySpanL="0"
-                emptySpanM="0"
-                emptySpanS="0"
                 columnsXL="1"
                 columnsL="1"
                 columnsM="1"
                 singleContainerFullSize="false"
             >
                 <f:content>
-                    <!-- Keep your existing content the same -->
                     <Label
                         text="{i18n>productIdLabel}"
                         visible="{= ${productDialog>/dialogMode} !== 'create'}"
@@ -38,6 +34,7 @@
                         text="{productDialog>/formData/ProductID}"
                         visible="{= ${productDialog>/dialogMode} !== 'create'}"
                     />
+                    
                     <Label
                         text="{i18n>productNameLabel}"
                         required="true"
@@ -46,7 +43,10 @@
                         value="{productDialog>/formData/ProductName}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
                         required="true"
+                        valueStateText="{i18n>requiredField}"
+                        valueState="{= ${productDialog>/formData/ProductName} ? 'None' : ${productDialog>/fieldValidated} ? 'Error' : 'None'}"
                     />
+                    
                     <Label
                         text="{i18n>quantityPerUnitLabel}"
                         required="true"
@@ -55,19 +55,46 @@
                         value="{productDialog>/formData/QuantityPerUnit}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
                         required="true"
+                        valueStateText="{i18n>requiredField}"
+                        valueState="{= ${productDialog>/formData/QuantityPerUnit} ? 'None' : ${productDialog>/fieldValidated} ? 'Error' : 'None'}"
                     />
+                    
+                    <Label text="{i18n>categoryLabel}" required="true" />
+                    <ComboBox
+                        selectedKey="{productDialog>/formData/CategoryID}"
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                        items="{
+                            path: 'productDialog>/categories'
+                        }"
+                        valueStateText="{i18n>requiredField}"
+                        valueState="{= ${productDialog>/formData/CategoryID} ? 'None' : ${productDialog>/fieldValidated} ? 'Error' : 'None'}"
+                    >
+                        <core:Item key="{productDialog>id}" text="{productDialog>name}" />
+                    </ComboBox>
+                    
                     <Label text="{i18n>unitPriceLabel}" />
                     <Input
                         value="{productDialog>/formData/UnitPrice}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
                         type="Number"
                     />
+                    
                     <Label text="{i18n>unitsInStockLabel}" />
                     <Input
                         value="{productDialog>/formData/UnitsInStock}"
                         editable="{= ${productDialog>/dialogMode} === 'create'}"
                         type="Number"
                     />
+                    
+                    <Label text="{i18n>reorderLevelLabel}" />
+                    <StepInput
+                        value="{productDialog>/formData/ReorderLevel}"
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                        min="0"
+                        max="100"
+                        step="5"
+                    />
+                    
                     <Label text="{i18n>discontinuedColumn}" />
                     <CheckBox
                         selected="{productDialog>/formData/Discontinued}"
@@ -76,20 +103,18 @@
                 </f:content>
             </f:SimpleForm>
         </content>
-        <!-- Change from 'buttons' to beginButton/endButton -->
-        <beginButton>
+        
+        <buttons>
             <Button
                 text="{i18n>saveButton}"
                 type="Emphasized"
                 press=".onSaveProduct"
                 visible="{= ${productDialog>/dialogMode} === 'create'}"
             />
-        </beginButton>
-        <endButton>
             <Button
                 text="{= ${productDialog>/dialogMode} === 'create' ? ${i18n>cancelButton} : ${i18n>closeButton}}"
                 press=".onCloseProductDialog"
             />
-        </endButton>
+        </buttons>
     </Dialog>
 </core:FragmentDefinition>
