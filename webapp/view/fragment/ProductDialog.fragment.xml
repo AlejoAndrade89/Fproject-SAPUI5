@@ -1,0 +1,120 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="productDialog"
+        title="{= ${productDialog>/dialogMode} === 'create' ? ${i18n>productDialogCreateTitle} : ${i18n>productDialogTitle} }"
+        class="sapUiSizeCompact"
+        busy="{productDialog>/busy}"
+    >
+        <content>
+            <f:SimpleForm
+                id="productForm"
+                editable="{= ${productDialog>/dialogMode} === 'create'}"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="4"
+                labelSpanL="4"
+                labelSpanM="4"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                columnsXL="1"
+                columnsL="1"
+                columnsM="1"
+                singleContainerFullSize="false"
+            >
+                <f:content>
+                    <Label
+                        text="{i18n>productIdLabel}"
+                        visible="{= ${productDialog>/dialogMode} !== 'create'}"
+                    />
+                    <Text
+                        text="{productDialog>/formData/ProductID}"
+                        visible="{= ${productDialog>/dialogMode} !== 'create'}"
+                    />
+                    
+                    <Label
+                        text="{i18n>productNameLabel}"
+                        required="true"
+                    />
+                    <Input
+                        value="{productDialog>/formData/ProductName}"
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                        required="true"
+                        valueStateText="{i18n>requiredField}"
+                        valueState="{= ${productDialog>/formData/ProductName} ? 'None' : ${productDialog>/fieldValidated} ? 'Error' : 'None'}"
+                    />
+                    
+                    <Label
+                        text="{i18n>quantityPerUnitLabel}"
+                        required="true"
+                    />
+                    <Input
+                        value="{productDialog>/formData/QuantityPerUnit}"
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                        required="true"
+                        valueStateText="{i18n>requiredField}"
+                        valueState="{= ${productDialog>/formData/QuantityPerUnit} ? 'None' : ${productDialog>/fieldValidated} ? 'Error' : 'None'}"
+                    />
+                    
+                    <Label text="{i18n>categoryLabel}" required="true" />
+                    <ComboBox
+                        selectedKey="{productDialog>/formData/CategoryID}"
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                        items="{
+                            path: 'productDialog>/categories'
+                        }"
+                        valueStateText="{i18n>requiredField}"
+                        valueState="{= ${productDialog>/formData/CategoryID} ? 'None' : ${productDialog>/fieldValidated} ? 'Error' : 'None'}"
+                    >
+                        <core:Item key="{productDialog>id}" text="{productDialog>name}" />
+                    </ComboBox>
+                    
+                    <Label text="{i18n>unitPriceLabel}" />
+                    <Input
+                        value="{productDialog>/formData/UnitPrice}"
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                        type="Number"
+                    />
+                    
+                    <Label text="{i18n>unitsInStockLabel}" />
+                    <Input
+                        value="{productDialog>/formData/UnitsInStock}"
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                        type="Number"
+                    />
+                    
+                    <Label text="{i18n>reorderLevelLabel}" />
+                    <StepInput
+                        value="{productDialog>/formData/ReorderLevel}"
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                        min="0"
+                        max="100"
+                        step="5"
+                    />
+                    
+                    <Label text="{i18n>discontinuedColumn}" />
+                    <CheckBox
+                        selected="{productDialog>/formData/Discontinued}"
+                        editable="{= ${productDialog>/dialogMode} === 'create'}"
+                    />
+                </f:content>
+            </f:SimpleForm>
+        </content>
+        
+        <buttons>
+            <Button
+                text="{i18n>saveButton}"
+                type="Emphasized"
+                press=".onSaveProduct"
+                visible="{= ${productDialog>/dialogMode} === 'create'}"
+            />
+            <Button
+                text="{= ${productDialog>/dialogMode} === 'create' ? ${i18n>cancelButton} : ${i18n>closeButton}}"
+                press=".onCloseProductDialog"
+            />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
