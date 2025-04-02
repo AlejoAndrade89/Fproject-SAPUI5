@@ -3,9 +3,10 @@
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:f="sap.ui.layout.form"
-    xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core"
-    xmlns:ui="sap.ui.table"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:smartField="sap.ui.comp.smartfield"
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     displayBlock="true"
 >
     <Page
@@ -25,10 +26,6 @@
                     labelSpanM="4"
                     labelSpanS="12"
                     adjustLabelSpan="false"
-                    emptySpanXL="0"
-                    emptySpanL="0"
-                    emptySpanM="0"
-                    emptySpanS="0"
                     columnsXL="2"
                     columnsL="2"
                     columnsM="2"
@@ -70,124 +67,78 @@
                 </f:SimpleForm>
 
                 <Panel
-                    expandable="true"
-                    expanded="true"
                     headerText="{i18n>supplierProductsTitle}"
                     class="sapUiResponsiveMargin"
+                    expandable="true"
+                    expanded="true"
                 >
-                    <headerToolbar>
-                        <OverflowToolbar>
-                            <Title
-                                text="{i18n>supplierProductsTitle}"
-                                level="H2"
-                            />
-                            <ToolbarSpacer />
-                            <Button
-                                text="{i18n>createProductButtonText}"
-                                icon="sap-icon://add"
-                                press=".onCreateProduct"
-                                type="Emphasized"
-                            />
-                        </OverflowToolbar>
-                    </headerToolbar>
                     <content>
-                        <ui:Table
-                            id="productsTable"
-                            rows="{products>/}"
-                            selectionMode="Single"
-                            selectionBehavior="RowSelector"
-                            visibleRowCount="5"
-                            rowSelectionChange=".onProductRowSelectionChange"
-                            alternateRowColors="true"
+                        <smartTable:SmartTable
+                            id="productsSmartTable"
+                            entitySet="Products"
+                            tableType="ResponsiveTable"
+                            enableExport="true"
+                            enableAutoBinding="true"
+                            beforeRebindTable=".onBeforeRebindTable"
+                            showRowCount="true"
+                            showFullScreenButton="true"
+                            class="sapUiResponsiveMargin"
+                            initiallyVisibleFields="ProductID,ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,Discontinued,CategoryID,ReorderLevel,SupplierID,UnitsOnOrder"
+                            persistencyKey="supplierProductsTable"
                         >
-                            <ui:columns>
-                                <ui:Column
-                                    id="productIdColumn"
-                                    width="100px"
-                                    sortProperty="ProductID"
-                                >
-                                    <Label text="{i18n>productIdColumn}" />
-                                    <ui:template>
-                                        <Text text="{products>ProductID}" />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="productNameColumn"
-                                    width="200px"
-                                    sortProperty="ProductName"
-                                >
-                                    <Label text="{i18n>productNameColumn}" />
-                                    <ui:template>
-                                        <Text text="{products>ProductName}" />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="quantityPerUnitColumn"
-                                    width="150px"
-                                    sortProperty="QuantityPerUnit"
-                                >
-                                    <Label
-                                        text="{i18n>quantityPerUnitColumn}"
+                            <Table
+                                id="innerProductsTable"
+                                fixedLayout="false"
+                                alternateRowColors="true"
+                                growing="true"
+                                growingThreshold="15"
+                                growingScrollToLoad="true"
+                                sticky="ColumnHeaders,HeaderToolbar"
+                                mode="SingleSelectMaster"
+                            >
+                                <!-- Columns are automatically managed by SmartTable based on metadata -->
+                            </Table>
+
+                            <smartTable:customToolbar>
+                                <OverflowToolbar design="Transparent">
+                                    <Title
+                                        id="productsTitle"
+                                        text="Products ({productsModel>/count})"
                                     />
-                                    <ui:template>
-                                        <Text
-                                            text="{products>QuantityPerUnit}"
-                                        />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="unitPriceColumn"
-                                    width="100px"
-                                    sortProperty="UnitPrice"
-                                >
-                                    <Label text="{i18n>unitPriceColumn}" />
-                                    <ui:template>
-                                        <Text
-                                            text="{
-                                            path: 'products>UnitPrice',
-                                            formatter: '.formatter.formatCurrency'
-                                        }"
-                                        />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="unitsInStockColumn"
-                                    width="100px"
-                                    sortProperty="UnitsInStock"
-                                >
-                                    <Label text="{i18n>unitsInStockColumn}" />
-                                    <ui:template>
-                                        <Text text="{products>UnitsInStock}" />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column
-                                    id="discontinuedColumn"
-                                    width="100px"
-                                    sortProperty="Discontinued"
-                                >
-                                    <Label text="{i18n>discontinuedColumn}" />
-                                    <ui:template>
-                                        <ObjectStatus
-                                            text="{= ${products>Discontinued} ? '${i18n>yes}' : '${i18n>no}' }"
-                                            state="{= ${products>Discontinued} ? 'Error' : 'Success' }"
-                                        />
-                                    </ui:template>
-                                </ui:Column>
-                                <ui:Column width="80px">
-                                    <Label text="{i18n>actionsColumn}" />
-                                    <ui:template>
-                                        <Button
-                                            icon="sap-icon://display"
-                                            press=".onShowProductDetails"
-                                            tooltip="{i18n>showProductDetailsTooltip}"
-                                        />
-                                    </ui:template>
-                                </ui:Column>
-                            </ui:columns>
-                        </ui:Table>
+                                    <ToolbarSpacer />
+                                    <Button
+                                        text="{i18n>createProductButtonText}"
+                                        icon="sap-icon://add"
+                                        press=".onCreateProduct"
+                                        type="Emphasized"
+                                        class="sapUiSmallMarginEnd"
+                                        tooltip="Create new product"
+                                    />
+                                    <Button
+                                        icon="sap-icon://delete"
+                                        text="{i18n>deleteProductButton}"
+                                        press=".onDeleteProduct"
+                                        enabled="{= ${productsModel>/selectedItem} !== null}"
+                                        type="Transparent"
+                                        tooltip="Delete selected product"
+                                    />
+                                </OverflowToolbar>
+                            </smartTable:customToolbar>
+                        </smartTable:SmartTable>
                     </content>
                 </Panel>
             </VBox>
         </content>
+
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button
+                    type="Back"
+                    text="Back to Suppliers"
+                    press=".onNavBack"
+                />
+            </Toolbar>
+        </footer>
     </Page>
 </mvc:View>
