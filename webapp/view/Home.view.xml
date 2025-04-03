@@ -11,12 +11,14 @@
     <Page
         id="supplierListPage"
         title="{i18n>homePageTitle}"
+        showFooter="true"
     >
         <content>
             <f:DynamicPage
                 id="dynamicPageId"
                 headerExpanded="{/headerExpanded}"
                 toggleHeaderOnTitleClick="true"
+                class="sapUiResponsiveMargin"
             >
                 <f:title>
                     <f:DynamicPageTitle>
@@ -110,9 +112,10 @@
                         enableBusyIndicator="true"
                         alternateRowColors="true"
                         ariaLabelledBy="title"
+                        class="sapUiMediumMarginTop"
                     >
                         <ui:rowMode>
-                            <rowmodes:Fixed rowCount="20" />
+                            <rowmodes:Fixed rowCount="15" />
                         </ui:rowMode>
 
                         <ui:extension>
@@ -205,5 +208,16 @@
                 </f:content>
             </f:DynamicPage>
         </content>
+        
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Text 
+                    text="© 2025 Supplier Management System" 
+                    class="sapUiSmallMargin"
+                />
+                <ToolbarSpacer/>
+            </OverflowToolbar>
+        </footer>
     </Page>
 </mvc:View>
